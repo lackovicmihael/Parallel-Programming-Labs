@@ -31,7 +31,6 @@ int main(int argc, char** argv) {
 
     unsigned int seed = rank;
 
-    /* generate random data */
     for (long long i = 0; i < local_n; i++) {
         data[i] = rand_r(&seed) % BINS;
     }
@@ -39,7 +38,6 @@ int main(int argc, char** argv) {
     MPI_Barrier(MPI_COMM_WORLD);
     double start = MPI_Wtime();
 
-    /* OpenMP histogram */
     #pragma omp parallel for
     for (long long i = 0; i < local_n; i++) {
         int val = data[i];
@@ -48,7 +46,6 @@ int main(int argc, char** argv) {
         local_hist[val]++;
     }
 
-    /* MPI reduction */
     MPI_Reduce(local_hist, global_hist, BINS, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
     MPI_Barrier(MPI_COMM_WORLD);
